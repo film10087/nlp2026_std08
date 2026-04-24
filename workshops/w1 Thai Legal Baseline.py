@@ -2,7 +2,7 @@
 import re
 from pythainlp.tokenize import word_tokenize
 
-LEGAL_KEYWORDS = ["ละเมิดสิทธิบัตร","เครื่องหมายการค้า","ลิขสิทธิ์","การกระทำความผิด"]
+LEGAL_KEYWORDS = ["ละเมิดสิทธิบัตร","เครื่องหมายการค้า","ลิขสิทธิ์","การกระทำความผิด","จำเลย","ศาล","คำพิพากษา","มาตรา","พ.ร.บ."]
 
 def legal_tokenizer(text):
     # 1.Protect Compound Keywords ด้วย Placeholder
