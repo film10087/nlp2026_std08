@@ -50,3 +50,27 @@ def get_physic_gate_preview(predicted_class, text):
 text = "การละเมิดสิทธิบัตรรายใหญ่"
 weight = get_physic_gate_preview(1,"text")
 print(f"Physics Gate Weight review: {weight}/10.0")
+
+# 4. Creation  JSON
+import json
+from datetime import datetime
+def create_json_entry(doc_id, text):
+    label = detect_category(text)
+    conf, signals = cal_confidence(text,label)
+    weight = get_physic_gate_preview(label,text)
+    entry = {
+        "id" : f"LAW-{doc_id:04d}",
+        "text": text,
+        "label": label,
+        "metadata":{
+            "confidence": conf,
+            "context-signals": signals,
+            "physic_gate_weight": weight,
+            "processed_at": datetime.now().isoformat(),
+            "requires_expert_review": conf <0.85
+        }
+    }
+    return entry
+# รัน Code  แสดงตัวอย่าง JSON
+sample_entry = create_json_entry(1,"ละเมิดสิทธิบัตรการประดิษฐ์")
+print(json.dumps(sample_entry, indent=4,ensure_ascii=False))
