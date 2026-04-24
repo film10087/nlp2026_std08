@@ -20,7 +20,7 @@ def legal_tokenizer(text):
     # 3. restore placeholder
     return [placeholders.get(t,t) for t in tokens_raw]
 
-test_text = "จำเลยกระทำความผิดฐานละเมิดสิทธิบัตรและเครื่องหมายการค้า"
+test_text = "จำเลยกระทำความผิดฐานละเมิดสิทธิบัตรและเครื่องหมายการค้าโดยไม่ได้รับอนุญาตตามมาตรา 27 แห่ง พ.ร.บ. สิทธิบัตร"
 tokens = legal_tokenizer(test_text)
 print(f"Input: {test_text}")
 print(f"Output: {tokens}")
@@ -35,7 +35,7 @@ def extract_legal_entities(text):
         entities.append({"type":"Action", "value": "VIOLATION", "conf":0.85})
     return entities
 
-sample = "มีการละเมิดสิทธิบัตรเกิดขึ้นในเขตพื้นที่"
+sample = "มีการละเมิดสิทธิบัตรรายใหญ่เกิดขึ้น"
 found = extract_legal_entities(sample)
 print(f"---Entity Extraction---")
 for e in found:
@@ -45,8 +45,8 @@ for e in found:
 from sklearn.feature_extraction.text import TfidfVectorizer
 corpus = [
     "ละเมิดสิทธิบัตรเเครื่องหมายการค้า",
-    "การกระทำความผิด ลิขสิทธิ์",
-    "จำเลย ละเมิด ลิขสิทธิ์"
+    "การกระทำความผิดฐานละเมิดสิทธิบัตร",
+    "จำเลยถูกฟ้องละเมิดสิทธิบัตร"
 ]
 # สร้าง vectorizer โดยใช้ Tokenizer ที่สร้างเอง
 vectorizer = TfidfVectorizer(tokenizer=legal_tokenizer, token_pattern=None)
