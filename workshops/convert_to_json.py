@@ -36,6 +36,7 @@ conf, sig = cal_confidence(text_with_context, 2)
 print(f"Confidence: {conf: 2f}")
 print(f"Signals: {sig}")
 
+
 #3. ลำดับศักดิ์ของข้อมูล เพื่อหาค่าน้ำหนักข้อมูล เชื่อมต่อไปที่ 17
 def get_physic_gate_preview(predicted_class, text):
     # 0:None, 1: Patent (Hight Complexity) , 2: Copyright (medium Complexity)
@@ -73,6 +74,3 @@ def create_json_entry(doc_id, text):
 # รัน Code  แสดงตัวอย่าง JSON
 sample_entry = create_json_entry(1,"ละเมิดสิทธิบัตรการประดิษฐ์")
 print(json.dumps(sample_entry, indent=4,ensure_ascii=False))
-
-
-
