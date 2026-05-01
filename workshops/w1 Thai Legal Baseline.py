@@ -25,6 +25,60 @@ tokens = legal_tokenizer(test_text)
 print(f"Input: {test_text}")
 print(f"Output: {tokens}")
 
+# การสวัดค่า ความกำกวม (Ambiguity Rate) เทียบระหว่าง Dictionary Base+Regex กับ "wangchanberta"
+def calculate_baseline_ambiguity_(text):
+    matches = []
+    for word in LEGAL_KEYWORDS:
+        for m in re.finditer(re.escape(word), text):
+            if m:
+                matches.append((m.start(), m.end(), word))
+
+            #ตรวจสอบการซ้อน  (Overlapping) ของ matches
+    overlaps = 0
+    for i in range(len(matches)):
+        for j in range(i+1, len(matches)):
+            # ถ้าตำแหน่งเริ่ม/จบ ทับซ้อนกัน ถือว่ากำกวม
+            if matches[i][0] < matches[j][1] and matches[j][0] < matches[i][1]:
+                overlaps += 1
+    return overlaps / len(matches) if matches else 0
+#รัน แสดงผล Baseline
+sample_text = "คดีการละเมิดสิทธิบัตรและเครื่องหมายการค้า"
+baseline_tokens = legal_tokenizer(sample_text)
+baseline_rate = calculate_baseline_ambiguity_(sample_text)
+print(f"W1 Baseline Result:")
+print(f"W1 Baseline Tokens: {baseline_tokens}")
+print(f"Bseline Ambiguity Rate: {baseline_rate}")
+
+# WangChanBERTa Pretain
+from transformers import AutoTokenizer
+# 1. load WangchanBerta 
+model_name = "airesearch/wangchanberta-base-att-spm-uncased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+def berta_tokenizer(text):
+    tokens = tokenizer.tokenize(text)
+    return [t.replace("▁","") for t in tokens if t.replace("▁","")]
+# ทดสอบการวัด กำกวม เน้นด้านกฎหมาย
+def analyze_refined_ambiguity(text,legal_keywords):
+    tokens = berta_tokenizer(text)
+    frag_score = []
+    for kw in legal_keywords:
+        if kw in text:
+            kw_tokens = berta_tokenizer(kw)
+            fragment_ratio = len(kw_tokens) /1
+            frag_score.append(fragment_ratio)
+    # Ambiguuity = Average Fragmentation - 1 แต่ถ้าตัดพอดี เท่ากับ 0
+    avg_frag = (sum(frag_score)/len(frag_score)) -1 if frag_score else 0
+    return min (avg_frag,1.0) 
+# รันแสดงผลเปรียบเทียบ
+refined_tokens = berta_tokenizer(sample_text)
+refined_rate = analyze_refined_ambiguity(sample_text,LEGAL_KEYWORDS)
+print(f"--W1 : Refined With WangChanBERTa ---")
+print(f"Tokens: {refined_tokens}")
+print(f"new Ambiguity fragmentation Rate: {refined_rate:.3f}")
+
+
+
 # 2. Context-aware Entity Extraction
 def extract_legal_entities(text):
     entities = []
